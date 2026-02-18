@@ -2,7 +2,9 @@
 locals {
   resource_group_name = "rg-${var.project_name}-${var.environment}"
   location            = var.location
-  tags                = var.tags
+  tags = merge(var.tags, {
+    "ManagedBy" = "GitHubActions"
+  })
 }
 
 # ---
