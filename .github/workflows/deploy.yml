@@ -47,6 +47,8 @@ jobs:
              # Use current account OID for Service Principal
              USER_ID=$(az account show --query user.name -o tsv)
              az keyvault set-policy --name $KV_NAME --object-id $USER_ID --secret-permissions get list set delete
+             echo "Waiting 60s for Access Policy propagation..."
+             sleep 60
            else
              echo "KeyVault not found (first run?), skipping pre-auth."
            fi
@@ -87,6 +89,8 @@ jobs:
              # Use current account OID for Service Principal
              USER_ID=$(az account show --query user.name -o tsv)
              az keyvault set-policy --name $KV_NAME --object-id $USER_ID --secret-permissions get list set delete
+             echo "Waiting 60s for Access Policy propagation..."
+             sleep 60
            else
              echo "KeyVault not found (first run?), skipping pre-auth."
            fi
