@@ -25,6 +25,10 @@ resource "azurerm_linux_web_app" "main" {
     always_on = false # Required for F1/D1 tiers
   }
 
+  identity {
+    type = "SystemAssigned"
+  }
+
   app_settings = {
     "WEBSITES_PORT"                         = "80"
     "APPINSIGHTS_INSTRUMENTATIONKEY"        = azurerm_application_insights.main.instrumentation_key
