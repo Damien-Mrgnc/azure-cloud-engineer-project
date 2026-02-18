@@ -1,4 +1,4 @@
-name: "Step 02 - Advanced Ops (Terraform)"
+name: "Terraform Azure Infrastructure CI/CD"
 
 on:
   push:
