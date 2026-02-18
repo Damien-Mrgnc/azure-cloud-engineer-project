@@ -32,6 +32,7 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v4
 
+      # Log into Azure using OIDC. This is required for the subsequent Azure CLI commands.
       - name: Log into Azure
         uses: azure/login@v1
         with:
@@ -39,22 +40,30 @@ jobs:
           tenant-id: ${{ secrets.AZURE_TENANT_ID }}
           subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
 
+      # WORKAROUND: Pre-authorize the GitHub Actions Service Principal on the Key Vault.
+      # This breaks the "circular dependency" where Terraform needs to read secrets to refresh state
+      # but doesn't have permissions yet. We use Azure CLI to force-inject the policy.
       - name: Pre-Authorize KeyVault Access
         run: |
            echo "Searching for Key Vault..."
            KV_NAME=$(az keyvault list --query "[?tags.Project=='CloudEngineer-Step1'].name" -o tsv | head -n 1)
+           
            if [ -n "$KV_NAME" ]; then
-             echo "KeyVault Found: $KV_NAME"
+             echo "Key Vault Found: $KV_NAME"
+             
+             # Retrieve the Application ID (Client ID)
              CLIENT_ID=$(az account show --query user.name -o tsv)
-             echo "Service Principal Client ID: $CLIENT_ID"
+             
+             # Retrieve the Object ID (Enterprise Application ID) which is required for Key Vault Policies
              OBJECT_ID=$(az ad sp show --id $CLIENT_ID --query id -o tsv)
-             echo "Service Principal Object ID: $OBJECT_ID"
-             echo "Setting Key Vault Policy for Object ID: $OBJECT_ID..."
+             
+             echo "Authorizing Service Principal (ObjID: $OBJECT_ID) on Key Vault..."
              az keyvault set-policy --name $KV_NAME --object-id $OBJECT_ID --secret-permissions get list set delete
-             echo "Policy set successfully. Waiting 60s for Azure IAM propagation..."
+             
+             echo "Policy set. Waiting 60s for Azure IAM propagation..."
              sleep 60
            else
-             echo "KeyVault not found (probably first run). Skipping Pre-Auth."
+             echo "Key Vault not found. Skipping pre-authorization (likely first run)."
            fi
 
       - name: Setup Terraform
@@ -85,22 +94,24 @@ jobs:
           tenant-id: ${{ secrets.AZURE_TENANT_ID }}
           subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
 
+      # Re-apply authorization for the Apply job (as jobs run on separate runners)
       - name: Pre-Authorize KeyVault Access
         run: |
-           echo "Searching for Key Vault during Apply..."
+           echo "Searching for Key Vault..."
            KV_NAME=$(az keyvault list --query "[?tags.Project=='CloudEngineer-Step1'].name" -o tsv | head -n 1)
+           
            if [ -n "$KV_NAME" ]; then
-             echo "KeyVault Found: $KV_NAME"
+             echo "Key Vault Found: $KV_NAME"
              CLIENT_ID=$(az account show --query user.name -o tsv)
-             echo "Service Principal Client ID: $CLIENT_ID"
              OBJECT_ID=$(az ad sp show --id $CLIENT_ID --query id -o tsv)
-             echo "Service Principal Object ID: $OBJECT_ID"
-             echo "Setting Key Vault Policy for Object ID: $OBJECT_ID..."
+             
+             echo "Authorizing Service Principal on Key Vault..."
              az keyvault set-policy --name $KV_NAME --object-id $OBJECT_ID --secret-permissions get list set delete
-             echo "Policy set successfully. Waiting 60s for Azure IAM propagation..."
+             
+             echo "Policy set. Waiting 60s for Azure IAM propagation..."
              sleep 60
            else
-             echo "KeyVault not found (probably first run). Skipping Pre-Auth."
+             echo "Key Vault not found. Skipping pre-authorization."
            fi
 
       - name: Setup Terraform
