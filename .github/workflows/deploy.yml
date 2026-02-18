@@ -41,16 +41,20 @@ jobs:
 
       - name: Pre-Authorize KeyVault Access
         run: |
+           echo "Searching for Key Vault..."
            KV_NAME=$(az keyvault list --query "[?tags.Project=='CloudEngineer-Step1'].name" -o tsv | head -n 1)
            if [ -n "$KV_NAME" ]; then
-             echo "KeyVault found: $KV_NAME"
-             # Use current account OID for Service Principal
-             USER_ID=$(az account show --query user.name -o tsv)
-             az keyvault set-policy --name $KV_NAME --object-id $USER_ID --secret-permissions get list set delete
-             echo "Waiting 60s for Access Policy propagation..."
+             echo "KeyVault Found: $KV_NAME"
+             CLIENT_ID=$(az account show --query user.name -o tsv)
+             echo "Service Principal Client ID: $CLIENT_ID"
+             OBJECT_ID=$(az ad sp show --id $CLIENT_ID --query id -o tsv)
+             echo "Service Principal Object ID: $OBJECT_ID"
+             echo "Setting Key Vault Policy for Object ID: $OBJECT_ID..."
+             az keyvault set-policy --name $KV_NAME --object-id $OBJECT_ID --secret-permissions get list set delete
+             echo "Policy set successfully. Waiting 60s for Azure IAM propagation..."
              sleep 60
            else
-             echo "KeyVault not found (first run?), skipping pre-auth."
+             echo "KeyVault not found (probably first run). Skipping Pre-Auth."
            fi
 
       - name: Setup Terraform
@@ -83,16 +87,20 @@ jobs:
 
       - name: Pre-Authorize KeyVault Access
         run: |
+           echo "Searching for Key Vault during Apply..."
            KV_NAME=$(az keyvault list --query "[?tags.Project=='CloudEngineer-Step1'].name" -o tsv | head -n 1)
            if [ -n "$KV_NAME" ]; then
-             echo "KeyVault found: $KV_NAME"
-             # Use current account OID for Service Principal
-             USER_ID=$(az account show --query user.name -o tsv)
-             az keyvault set-policy --name $KV_NAME --object-id $USER_ID --secret-permissions get list set delete
-             echo "Waiting 60s for Access Policy propagation..."
+             echo "KeyVault Found: $KV_NAME"
+             CLIENT_ID=$(az account show --query user.name -o tsv)
+             echo "Service Principal Client ID: $CLIENT_ID"
+             OBJECT_ID=$(az ad sp show --id $CLIENT_ID --query id -o tsv)
+             echo "Service Principal Object ID: $OBJECT_ID"
+             echo "Setting Key Vault Policy for Object ID: $OBJECT_ID..."
+             az keyvault set-policy --name $KV_NAME --object-id $OBJECT_ID --secret-permissions get list set delete
+             echo "Policy set successfully. Waiting 60s for Azure IAM propagation..."
              sleep 60
            else
-             echo "KeyVault not found (first run?), skipping pre-auth."
+             echo "KeyVault not found (probably first run). Skipping Pre-Auth."
            fi
 
       - name: Setup Terraform
