@@ -1,4 +1,4 @@
-variable "project_name" {
+﻿variable "project_name" {
   description = "A unique name for this project"
   type        = string
   default     = "projet1"
@@ -44,3 +44,10 @@ variable "tags" {
     Terraform   = "True"
   }
 }
+
+variable "alert_email" {
+  description = "Email address for monitoring alerts"
+  type        = string
+}
+
+

@@ -1,4 +1,4 @@
-name: "Terraform Azure Infrastructure CI/CD"
+﻿name: "Terraform Azure Infrastructure CI/CD"
 
 on:
   push:
@@ -20,6 +20,7 @@ env:
   ARM_SUBSCRIPTION_ID: "${{ secrets.AZURE_SUBSCRIPTION_ID }}"
   ARM_TENANT_ID: "${{ secrets.AZURE_TENANT_ID }}"
   ARM_USE_OIDC: true
+  TF_VAR_alert_email: "${{ secrets.ALERT_EMAIL }}"
 
 jobs:
   terraform-plan:
@@ -122,3 +123,4 @@ jobs:
 
       - name: Terraform Apply
         run: terraform apply -auto-approve -input=false
+
