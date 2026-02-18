@@ -1,5 +1,14 @@
 terraform {
   required_version = ">= 1.5.0" # Force la derniere version stable
+
+  backend "azurerm" {
+    resource_group_name  = "rg-tfstate-backend"
+    storage_account_name = "sttfstate3756"
+    container_name       = "tfstate"
+    key                  = "terraform.tfstate"
+    use_oidc             = true
+  }
+
   required_providers {
     azurerm = {
       source  = "hashicorp/azurerm"
