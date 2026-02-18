@@ -4,7 +4,7 @@ locals {
   location            = var.location
   tags = merge(var.tags, {
     "ManagedBy" = "GitHubActions"
-    "Trigger"   = "RemoteStateTest"
+    "Trigger"   = "Success"
   })
 }
 
