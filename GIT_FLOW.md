@@ -39,7 +39,6 @@ Ce document définit la stratégie de commits pour passer du **Projet 1 (Fondati
 
 ```text
 Projet1-Cloud Engineer/
-├── .github/                # Workflows CI/CD
 ├── phase-1-infrastructure/ # Documentation & Preuves Phase 1
 ├── terraform/              # Infrastructure as Code
 │   ├── modules/
