@@ -1,0 +1,84 @@
+name: "App Build & Deploy"
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  id-token: write
+  contents: read
+
+env:
+  PROJECT_TAG: "CloudEngineer-Step1"
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./runtime-governance-app
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Log into Azure
+        uses: azure/login@v1
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
+      - name: Retrieve Azure Resources
+        id: resources
+        run: |
+          echo "Finding ACR..."
+          # Use double quotes for query to allow variable expansion
+          ACR_NAME=$(az acr list --query "[?tags.Project=='$PROJECT_TAG'].name" -o tsv | head -n 1)
+          ACR_SERVER=$(az acr list --query "[?tags.Project=='$PROJECT_TAG'].loginServer" -o tsv | head -n 1)
+          
+          echo "Finding APP SERVICE..."
+          WEBAPP_NAME=$(az webapp list --query "[?tags.Project=='$PROJECT_TAG'].name" -o tsv | head -n 1)
+          RG_NAME=$(az webapp list --query "[?tags.Project=='$PROJECT_TAG'].resourceGroup" -o tsv | head -n 1)
+
+          if [ -z "$ACR_NAME" ] || [ -z "$WEBAPP_NAME" ]; then
+            echo "::error::Could not find ACR or Web App with tag Project=$PROJECT_TAG. Please run Terraform first."
+            exit 1
+          fi
+
+          echo "ACR_NAME=$ACR_NAME" >> $GITHUB_ENV
+          echo "ACR_SERVER=$ACR_SERVER" >> $GITHUB_ENV
+          echo "WEBAPP_NAME=$WEBAPP_NAME" >> $GITHUB_ENV
+          echo "RG_NAME=$RG_NAME" >> $GITHUB_ENV
+          
+          echo "Found ACR: $ACR_NAME ($ACR_SERVER)"
+          echo "Found Web App: $WEBAPP_NAME in RG $RG_NAME"
+
+      - name: Login to ACR
+        run: az acr login --name ${{ env.ACR_NAME }}
+      
+      - name: Build Docker Image
+        run: |
+          image_tag="${{ env.ACR_SERVER }}/runtime-governance-app:${{ github.sha }}"
+          image_latest="${{ env.ACR_SERVER }}/runtime-governance-app:latest"
+          
+          echo "Building $image_tag..."
+          docker build -t $image_tag -t $image_latest .
+
+      - name: Push Docker Image
+        run: |
+           docker push "${{ env.ACR_SERVER }}/runtime-governance-app:${{ github.sha }}"
+           docker push "${{ env.ACR_SERVER }}/runtime-governance-app:latest"
+
+      - name: Deploy to Azure Web App
+        uses: azure/webapps-deploy@v3
+        with:
+          app-name: ${{ env.WEBAPP_NAME }}
+          images: ${{ env.ACR_SERVER }}/runtime-governance-app:${{ github.sha }}
+
+      - name: Verify
+        run: |
+          echo "Deployment triggered successfully."
+          echo "App URL: https://${{ env.WEBAPP_NAME }}.azurewebsites.net"

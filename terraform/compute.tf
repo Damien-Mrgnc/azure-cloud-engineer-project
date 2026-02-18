@@ -19,6 +19,7 @@ resource "azurerm_linux_web_app" "main" {
 
   site_config {
     application_stack {
+      # Initial image (hello world), will be overwritten by CI/CD
       docker_image_name   = "nginxdemos/hello:latest"
       docker_registry_url = "https://index.docker.io"
     }
@@ -30,9 +31,32 @@ resource "azurerm_linux_web_app" "main" {
   }
 
   app_settings = {
-    "WEBSITES_PORT"                         = "80"
+    # Port interne de l'application Node.js
+    "WEBSITES_PORT" = "8080"
+    "PORT"          = "8080"
+    "NODE_ENV"      = "production"
+
     "APPINSIGHTS_INSTRUMENTATIONKEY"        = azurerm_application_insights.main.instrumentation_key
     "APPLICATIONINSIGHTS_CONNECTION_STRING" = azurerm_application_insights.main.connection_string
+
+    # Key Vault Integration
+    "KEY_VAULT_URL" = azurerm_key_vault.main.vault_uri
+
+    # Database Connection String with Key Vault Reference for Password
+    # Format: sqlserver://<server>;database=<db>;user=<user>;password=@Microsoft.KeyVault(...);encrypt=true
+    "DATABASE_URL" = "sqlserver://${azurerm_mssql_server.main.fully_qualified_domain_name};database=${azurerm_mssql_database.main.name};user=${var.sql_admin_login};password=@Microsoft.KeyVault(SecretUri=${azurerm_key_vault_secret.sql_password.versionless_id});encrypt=true;trustServerCertificate=false"
+  }
+
+  lifecycle {
+    ignore_changes = [
+      # Ignorer les changements d'image Docker faits par la CI/CD
+      site_config[0].application_stack[0].docker_image_name,
+      site_config[0].application_stack[0].docker_registry_url,
+      site_config[0].application_stack[0].docker_registry_username,
+      site_config[0].application_stack[0].docker_registry_password,
+      # Ignorer les tags ajoutés par Azure
+      tags
+    ]
   }
 
   tags = local.tags
