@@ -1,0 +1,7 @@
+﻿NAME,TYPE,LOCATION,RESOURCE LINK
+"ASP-proj1manuelrg-94fd","App Service plan","France Central","https://portal.azure.com#resource/subscriptions/0f3b6c74-e6a7-46dd-bf2f-079c4568c1c2/resourceGroups/proj1-manuel-rg/providers/Microsoft.Web/serverFarms/ASP-proj1manuelrg-94fd"
+"proj1-db","SQL database","France Central","https://portal.azure.com#resource/subscriptions/0f3b6c74-e6a7-46dd-bf2f-079c4568c1c2/resourceGroups/proj1-manuel-rg/providers/Microsoft.Sql/servers/proj1-srv-damien/databases/proj1-db"
+"proj1-kv-damien","Key vault","France Central","https://portal.azure.com#resource/subscriptions/0f3b6c74-e6a7-46dd-bf2f-079c4568c1c2/resourceGroups/proj1-manuel-rg/providers/Microsoft.KeyVault/vaults/proj1-kv-damien"
+"proj1-srv-damien","SQL server","France Central","https://portal.azure.com#resource/subscriptions/0f3b6c74-e6a7-46dd-bf2f-079c4568c1c2/resourceGroups/proj1-manuel-rg/providers/Microsoft.Sql/servers/proj1-srv-damien"
+"proj1-vnet","Virtual network","France Central","https://portal.azure.com#resource/subscriptions/0f3b6c74-e6a7-46dd-bf2f-079c4568c1c2/resourceGroups/proj1-manuel-rg/providers/Microsoft.Network/virtualNetworks/proj1-vnet"
+"proj1-webapp-damien","App Service","France Central","https://portal.azure.com#resource/subscriptions/0f3b6c74-e6a7-46dd-bf2f-079c4568c1c2/resourceGroups/proj1-manuel-rg/providers/Microsoft.Web/sites/proj1-webapp-damien"

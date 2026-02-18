@@ -1,0 +1,13 @@
+# Exporter les secrets et configuration Terraform
+.terraform/
+*.tfstate
+*.tfstate.*
+crash.log
+*.tfvars
+
+# Ignorer les guides et la documentation interne
+guides/
+
+# Fichiers macOS/Windows inutiles
+.DS_Store
+Thumbs.db
