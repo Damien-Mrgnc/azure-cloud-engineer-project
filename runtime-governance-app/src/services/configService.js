@@ -1,5 +1,4 @@
-const { PrismaClient } = require('@prisma/client');
-const prisma = new PrismaClient();
+const prisma = require('../config/database');
 const logger = require('../config/logger');
 
 // Récupérer la config actuelle (avec valeurs par défaut si vide)
