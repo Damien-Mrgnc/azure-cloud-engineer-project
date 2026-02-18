@@ -14,9 +14,6 @@ resource "azurerm_container_registry" "main" {
 
 # ---
 # Role Assignment: Allow App Service to Pull Images
+# REMOVED: Requires 'Owner' or 'User Access Administrator' permissions which the SP might not have.
+# We will use ACR Admin Credentials in compute.tf instead.
 # ---
-resource "azurerm_role_assignment" "aks_pull" {
-  scope                = azurerm_container_registry.main.id
-  role_definition_name = "AcrPull"
-  principal_id         = azurerm_linux_web_app.main.identity[0].principal_id
-}

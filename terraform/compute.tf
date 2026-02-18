@@ -36,6 +36,11 @@ resource "azurerm_linux_web_app" "main" {
     "PORT"          = "8080"
     "NODE_ENV"      = "production"
 
+    # ACR Credentials (Fallback for when Role Assignment fails)
+    "DOCKER_REGISTRY_SERVER_URL"      = "https://${azurerm_container_registry.main.login_server}"
+    "DOCKER_REGISTRY_SERVER_USERNAME" = azurerm_container_registry.main.admin_username
+    "DOCKER_REGISTRY_SERVER_PASSWORD" = azurerm_container_registry.main.admin_password
+
     "APPINSIGHTS_INSTRUMENTATIONKEY"        = azurerm_application_insights.main.instrumentation_key
     "APPLICATIONINSIGHTS_CONNECTION_STRING" = azurerm_application_insights.main.connection_string
 
