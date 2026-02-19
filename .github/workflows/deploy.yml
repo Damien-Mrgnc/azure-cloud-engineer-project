@@ -99,6 +99,7 @@ jobs:
       - name: Pre-Authorize KeyVault Access
         run: |
            echo "Searching for Key Vault..."
+           echo "Verifying Key Vault access..."
            KV_NAME=$(az keyvault list --query "[?tags.Project=='CloudEngineer-Step1'].name" -o tsv | head -n 1)
            
            if [ -n "$KV_NAME" ]; then
