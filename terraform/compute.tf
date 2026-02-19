@@ -47,9 +47,10 @@ resource "azurerm_linux_web_app" "main" {
     # Key Vault Integration
     "KEY_VAULT_URL" = azurerm_key_vault.main.vault_uri
 
+
     # Database Connection String with Key Vault Reference for Password
     # Format: sqlserver://<server>;database=<db>;user=<user>;password=@Microsoft.KeyVault(...);encrypt=true
-    "DATABASE_URL" = "sqlserver://${azurerm_mssql_server.main.fully_qualified_domain_name};database=${azurerm_mssql_database.main.name};user=${var.sql_admin_login};password=@Microsoft.KeyVault(SecretUri=${azurerm_key_vault_secret.sql_password.versionless_id});encrypt=true;trustServerCertificate=false"
+    "DATABASE_URL" = "@Microsoft.KeyVault(SecretUri=${azurerm_key_vault_secret.sql_connection_string.versionless_id})"
   }
 
   lifecycle {

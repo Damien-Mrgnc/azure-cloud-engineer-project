@@ -43,3 +43,11 @@ resource "azurerm_key_vault_secret" "sql_password" {
 
   tags = local.tags
 }
+
+resource "azurerm_key_vault_secret" "sql_connection_string" {
+  name         = "sql-connection-string"
+  value        = "sqlserver://${azurerm_mssql_server.main.fully_qualified_domain_name}:1433;database=${azurerm_mssql_database.main.name};user=${var.sql_admin_login};password=${random_password.sql_admin.result};encrypt=true;trustServerCertificate=false"
+  key_vault_id = azurerm_key_vault.main.id
+
+  tags = local.tags
+}
