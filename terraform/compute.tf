@@ -55,15 +55,16 @@ resource "azurerm_linux_web_app" "main" {
 
   lifecycle {
     ignore_changes = [
-      # Ignorer les changements d'image Docker faits par la CI/CD
       site_config[0].application_stack[0].docker_image_name,
-      site_config[0].application_stack[0].docker_registry_url,
-      site_config[0].application_stack[0].docker_registry_username,
-      site_config[0].application_stack[0].docker_registry_password,
-      # Ignorer les tags ajoutés par Azure
       tags
     ]
   }
 
   tags = local.tags
+}
+
+resource "azurerm_role_assignment" "acr_pull" {
+  scope                = azurerm_container_registry.main.id
+  role_definition_name = "AcrPull"
+  principal_id         = azurerm_linux_web_app.main.identity[0].principal_id
 }
