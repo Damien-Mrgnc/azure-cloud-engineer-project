@@ -31,7 +31,7 @@ variable "db_sku_name" {
 variable "app_service_sku" {
   description = "SKU for the App Service Plan (F1 for Free, B1 for reliable Dev)"
   type        = string
-  default     = "F1"
+  default     = "B1"
 }
 
 variable "tags" {

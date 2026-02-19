@@ -23,7 +23,7 @@ resource "azurerm_linux_web_app" "main" {
       docker_image_name   = "nginxdemos/hello:latest"
       docker_registry_url = "https://index.docker.io"
     }
-    always_on = false # Required for F1/D1 tiers
+    always_on = true # Recommended for B1 and higher. Should be false for F1/D1.
   }
 
   identity {
