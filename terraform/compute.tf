@@ -23,7 +23,8 @@ resource "azurerm_linux_web_app" "main" {
       docker_image_name   = "nginxdemos/hello:latest"
       docker_registry_url = "https://index.docker.io"
     }
-    always_on = true # Recommended for B1 and higher. Should be false for F1/D1.
+    always_on        = true # Recommended for B1 and higher. Should be false for F1/D1.
+    app_command_line = "npm start"
   }
 
   identity {
