@@ -1,17 +1,17 @@
 const prisma = require('../config/database');
 const logger = require('../config/logger');
 
-// Récupérer la config actuelle (avec valeurs par défaut si vide)
+// Get current config (with default values if empty)
 async function getConfig() {
-    // Liste des clés attendues
+    // List of expected keys
     const keys = ['siteTitle', 'siteDescription', 'maintenanceMode', 'theme'];
 
-    // Chercher en DB
+    // Search in DB
     const configs = await prisma.appConfig.findMany({
         where: { keyName: { in: keys } },
     });
 
-    // Mapper résultat DB vers objet simple
+    // Map DB result to simple object
     const defaultConfig = {
         siteTitle: 'Default Title',
         siteDescription: 'Default Description',
@@ -32,11 +32,11 @@ async function getConfig() {
     return result;
 }
 
-// Mettre à jour la config (Transaction + Audit)
+// Update config (Transaction + Audit)
 async function updateConfig(newConfig, changedBy = 'system', correlationId) {
     logger.info(`Updating config by ${changedBy}`, { newConfig, correlationId });
 
-    // 1. Lire état existant pour Audit (oldValue)
+    // 1. Read existing state for Audit (oldValue)
     const existingRecords = await prisma.appConfig.findMany({
         where: { keyName: { in: Object.keys(newConfig) } }
     });
@@ -50,10 +50,10 @@ async function updateConfig(newConfig, changedBy = 'system', correlationId) {
         const stringVal = String(val);
         const oldVal = existingMap.get(key);
 
-        // Si pas de changement, on skip (optimisation)
+        // If no change, skip (optimization)
         if (oldVal === stringVal) continue;
 
-        // Opération Update/Upsert Config
+        // Update/Upsert Config Operation
         operations.push(
             prisma.appConfig.upsert({
                 where: { keyName: key },
@@ -62,7 +62,7 @@ async function updateConfig(newConfig, changedBy = 'system', correlationId) {
             })
         );
 
-        // Opération Insert Audit
+        // Insert Audit Operation
         operations.push(
             prisma.appConfigAudit.create({
                 data: {
@@ -77,17 +77,17 @@ async function updateConfig(newConfig, changedBy = 'system', correlationId) {
     }
 
     if (operations.length > 0) {
-        // Exécution atomique
+        // Atomic execution
         await prisma.$transaction(operations);
         logger.info(`Configuration updated successfully (${operations.length / 2} keys changed)`, { correlationId });
     } else {
         logger.info('No changes detected in configuration update', { correlationId });
     }
 
-    return getConfig(); // Retourne état frais
+    return getConfig(); // Return fresh state
 }
 
-// Récupérer l'historique des modifications
+// Retrieve modification history
 async function getAuditLogs() {
     return await prisma.appConfigAudit.findMany({
         orderBy: { changedAt: 'desc' },

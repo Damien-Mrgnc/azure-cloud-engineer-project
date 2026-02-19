@@ -1,33 +1,27 @@
-﻿# Projet 1 Azure - Premiere avancee
+﻿# Phase 1: Basic Azure Infrastructure
 
-## Contexte
-Ce dossier prepare une **premiere avancee propre pour GitHub** du Projet 1 (Cloud Engineer - Azure).
-Le travail suit la logique du guide 1 :
-1. apprentissage manuel sur Azure Portal,
-2. nettoyage des ressources pour controler les couts,
-3. automatisation avec Terraform,
-4. preuves de validation.
+## Context
+This folder represents the first milestone of the Azure Cloud Engineer project. The goal is to establish a solid foundation by starting with manual learning (ClickOps) before transitioning to automated deployment.
 
-Objectif de cette publication : montrer clairement **ce qui devait etre cree** et **ce qui a ete effectivement realise**, avec des preuves rangees par etape.
+The methodology followed is:
+1.  **Manual Learning**: Creating resources via the Azure Portal to understand the components.
+2.  **Cleanup**: Deleting manual resources to avoid unnecessary costs.
+3.  **Automation**: Rebuilding the infrastructure using Infrastructure as Code (IaC) with Terraform.
+4.  **Validation**: Verifying the deployment.
 
-## Structure
-- `01-manual-learning` : creation manuelle des ressources Azure + export des ressources.
-- `02-cleanup` : suppression du resource group manuel.
-- `03-automation` : reconstruction en IaC avec Terraform + log d'execution.
-- `04-validation` : validation finale des composants deployes.
+## Folder Structure
+*   `01-manual-learning`: Records of manual creation and configuration exports.
+*   `02-cleanup`: Proof of deletion of the initial resource group.
+*   `03-automation`: Initial Terraform scripts and execution logs.
+*   `04-validation`: Tests and validation of deployed components.
 
-## Portee de cette avancee
-Cette avancee couvre la fondation infra Azure du projet:
-- Resource Group
-- VNet + subnets + NSG
-- Azure SQL (server + database)
-- Key Vault (secret DB)
-- App Service Linux (container nginx demo)
+## Infrastructure Scope
+This phase establishes the following foundations:
+*   **Resource Group**: Logical container for all project resources.
+*   **Network (VNet)**: Network segmentation with subnets and NSGs (Network Security Groups).
+*   **Database**: Azure SQL Server and Database.
+*   **Security**: Azure Key Vault for secret management.
+*   **Compute**: Linux Azure App Service (hosting an initial Nginx demo).
 
-## Source des preuves
-Les preuves de ce dossier proviennent de:
-- `01-manual-learning/Azureresources.csv`
-- `02-cleanup/did.txt`
-- `03-automation/output.log`
-- `03-automation/README.md`
-- `04-validation/README.md`
+## Validation Proofs
+Execution logs and deployment proofs are available in the respective subfolders, specifically `03-automation/output.log` and the validation report in `04-validation`.

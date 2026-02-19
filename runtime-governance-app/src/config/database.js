@@ -1,9 +1,9 @@
 const { PrismaClient } = require('@prisma/client');
 const logger = require('./logger');
 
-// Prisma utilisera par défaut DATABASE_URL de l'environnement.
-// Dans Azure, cette variable sera injectée via App Settings (Terraform).
-// Format attendu pour Managed Identity :
+// Prisma will default to DATABASE_URL from the environment.
+// In Azure, this variable will be injected via App Settings (Terraform).
+// Expected format for Managed Identity:
 // sqlserver://server.database.windows.net:1433;database=db;authenticationType=azure-active-directory-msi;encrypt=true
 
 const prisma = new PrismaClient({

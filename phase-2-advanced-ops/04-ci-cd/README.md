@@ -1,42 +1,16 @@
-# Étape 04 - Pipeline CI/CD Automatisé (GitHub Actions)
+# CI/CD Pipeline (GitHub Actions)
 
-## Objectif
-Automatiser le déploiement de l'infrastructure via **GitHub Actions**, en remplaçant l'exécution locale de Terraform. L'objectif est d'atteindre un niveau professionnel de **Continuous Integration / Continuous Deployment (CI/CD)** avec une sécurité maximale.
+## Description
+This step implements a Continuous Integration and Continuous Deployment (CI/CD) pipeline to automate the building and deployment of the application.
 
-## Architecture du Pipeline
-Le workflow (`.github/workflows/deploy.yml`) suit les meilleures pratiques DevOps :
+## Pipeline Workflow
+1.  **Build**: Compilation of the Node.js application and creation of the Docker image.
+2.  **Push**: Sending the image to the Azure Container Registry (ACR).
+3.  **Infrastructure**: Validation of Terraform code (`plan` / `apply`) (optional depending on workflow configuration).
+4.  **Deploy**: Updating the App Service to use the new Docker image.
 
-1.  **Authentification OIDC (OpenID Connect)** :
-    *   Pas de secrets (Client Secret) stockés dans GitHub.
-    *   Utilisation d'une **Identité Fédérée** entre GitHub et Azure AD.
-    *   Sécurité renforcée et rotation automatique des tokens.
+## Security
+*   Use of **OpenID Connect (OIDC)** to authenticate GitHub Actions with Azure without storing long-lived secrets.
 
-2.  **Remote State Management** :
-    *   Le fichier d'état Terraform (`terraform.tfstate`) n'est plus local.
-    *   Il est stocké de manière sécurisée et verrouillée dans un **Azure Storage Account** (`sttfstate...`).
-    *   Permet le travail collaboratif et la persistance de l'état entre les runs CI/CD.
-
-3.  **Gestion Dynamique des accès Key Vault** :
-    *   Problème résolu : Le Service Principal de GitHub Actions n'a pas accès par défaut aux secrets du Key Vault.
-    *   Solution implémentée : Un script de **Pre-Authorization** s'exécute avant Terraform.
-    *   Il utilise Azure CLI pour s'autoriser lui-même temporairement (`set-policy`) sur le Key Vault, permettant à Terraform de lire les secrets sans erreur `403 Forbidden`.
-
-## Workflow
-Le pipeline se déclenche à chaque **Push** sur la branche `main` modifiant le dossier `terraform/`.
-
-### Jobs
-1.  **Terraform Plan** :
-    *   Checkout du code.
-    *   Login Azure (OIDC).
-    *   **Pre-Authorize KeyVault** (Script d'auto-permission).
-    *   `terraform init` (Backend Azure).
-    *   `terraform plan` (Affiche les changements prévus).
-
-2.  **Terraform Apply** (si le Plan réussit) :
-    *   Mêmes étapes d'initialisation et d'autorisation.
-    *   `terraform apply -auto-approve` : Applique réellement les changements sur Azure.
-
-## Preuve de fonctionnement
-- Le workflow est visible dans l'onglet **Actions** du repository GitHub.
-- Chaque commit sur l'infrastructure déclenche un pipeline traçable et auditable.
-- L'infrastructure est désormais **Immuable** et pilotée par le code (GitOps).
+## Deliverables
+*   `.github/workflows/deploy.yml`: Workflow definition file.

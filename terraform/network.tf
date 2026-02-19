@@ -23,7 +23,7 @@ resource "azurerm_subnet" "private" {
   address_prefixes     = ["10.0.2.0/24"]
 }
 
-# Security Group (NSG) - Best Practice pour sécuriser le subnet public
+# Security Group (NSG) - Best Practice to secure public subnet
 resource "azurerm_network_security_group" "public_nsg" {
   name                = "nsg-${var.project_name}-public"
   location            = azurerm_resource_group.main.location

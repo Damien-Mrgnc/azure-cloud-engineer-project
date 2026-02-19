@@ -1,13 +1,12 @@
-﻿# Etape 4 - Preuves et finitions
+﻿# Deployment Validation
 
-## Contexte (ce qu'il fallait valider)
-Verifier que l'infrastructure automatisee est operationnelle et documenter les preuves de fonctionnement.
+## Description
+Once the infrastructure is deployed via automation, it is necessary to validate that the services are operational and interact correctly with each other.
 
-## Actions effectuees
-- Validation de l'URL web de l'App Service.
-- Validation des composants SQL / Key Vault.
-- Consolidation de la liste des ressources deployees.
-- Rappel de la commande de destruction pour controler les couts.
+## Actions Performed
+1.  Verification of connectivity to the App Service.
+2.  Verification of the connection between the App Service and the SQL Database.
+3.  Validation of network security rules (NSG).
 
-## Preuves
-- `README_source.md` : preuve de validation finale et checklist de fin d'etape.
+## Deliverables
+*   Validation report confirming availability of services.

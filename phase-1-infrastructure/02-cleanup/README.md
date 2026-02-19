@@ -1,10 +1,12 @@
-﻿# Etape 2 - Nettoyage
+﻿# Resource Cleanup
 
-## Contexte (ce qu'il fallait faire)
-Supprimer toutes les ressources manuelles pour eviter tout cout inutile.
+## Description
+After the manual learning phase, it is crucial to delete the manually created resources. This ensures that the automation phase starts from a clean state and avoids incurring unnecessary costs for test resources.
 
-## Actions effectuees
-- Suppression du Resource Group manuel et des ressources associees.
+## Actions Performed
+1.  Identification of the manual Resource Group.
+2.  Deletion of the Resource Group via Azure CLI or Portal.
+3.  Verification that all associated resources have been removed.
 
-## Preuves
-- `did.txt` : note d'execution du nettoyage.
+## Deliverables
+*   `did.txt`: Confirmation log of the cleanup operation.

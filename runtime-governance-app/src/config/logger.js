@@ -4,11 +4,11 @@ const logger = winston.createLogger({
     level: process.env.NODE_ENV === 'production' ? 'info' : 'debug',
     format: winston.format.combine(
         winston.format.timestamp(),
-        winston.format.json() // Format JSON obligatoire pour Azure
+        winston.format.json() // JSON format mandatory for Azure
     ),
     defaultMeta: { service: 'runtime-governance-app' },
     transports: [
-        new winston.transports.Console() // Tout va vers stdout (capturé par Azure)
+        new winston.transports.Console() // Everything goes to stdout (captured by Azure)
     ],
 });
 

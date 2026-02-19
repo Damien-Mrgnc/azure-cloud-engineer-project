@@ -32,7 +32,7 @@ resource "azurerm_linux_web_app" "main" {
   }
 
   app_settings = {
-    # Port interne de l'application Node.js
+    # Internal port for Node.js application
     "WEBSITES_PORT" = "8080"
     "PORT"          = "8080"
     "NODE_ENV"      = "production"

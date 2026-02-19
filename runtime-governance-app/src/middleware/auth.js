@@ -1,12 +1,12 @@
 const logger = require('../config/logger');
 
-// App Service décode/passe les infos dans des headers X-MS-CLIENT-PRINCIPAL-...
-// Ce middleware lit ces headers pour reconstruire l'identité.
-// Si on veut être strict en LOCAL (sans Azure), on peut simuler via des .vars ou bypass.
+// App Service decodes/passes info in X-MS-CLIENT-PRINCIPAL-... headers
+// This middleware reads these headers to reconstruct identity.
+// To be strict in LOCAL (without Azure), simulate via .vars or bypass.
 
 function requireAuth(req, res, next) {
     if (process.env.NODE_ENV === 'development') {
-        // Mock en dev pour éviter la complexité EasyAuth locale
+        // Mock in dev to avoid local EasyAuth complexity
         req.user = {
             name: 'dev-admin',
             roles: ['AppAdmin']
@@ -28,16 +28,16 @@ function requireAuth(req, res, next) {
         if (principalEncoded) {
             const buffer = Buffer.from(principalEncoded, 'base64');
             const decoded = JSON.parse(buffer.toString('utf-8'));
-            // decoded.claims contient les roles si configurés dans l'App Registration
-            // Mais souvent avec EasyAuth simple, on a juste l'identité.
-            // On va assumer ici que tout utilisateur authentifié AAD de l'org est "User".
-            userRoles = decoded.user_roles || []; // Dépend de la config EasyAuth
+            // decoded.claims contains roles if configured in App Registration
+            // But often with simple EasyAuth, we just have identity.
+            // We assume here that any authenticated AAD user in the org is "User".
+            userRoles = decoded.user_roles || []; // Depends on EasyAuth config
         }
 
         req.user = {
             id: principalId,
             name: principalName,
-            roles: userRoles // À mapper selon la configuration réelle
+            roles: userRoles // Map according to real configuration
         };
 
         next();
@@ -48,12 +48,12 @@ function requireAuth(req, res, next) {
 }
 
 function requireAdmin(req, res, next) {
-    // Dans ce POC simple, on demande juste d'être authentifié pour l'admin.
-    // Pour aller plus loin, on vérifierait req.user.roles.includes('AppAdmin').
+    // In this simple POC, just require authentication for admin.
+    // To go further, verify req.user.roles.includes('AppAdmin').
     if (!req.user) {
         return res.status(401).send('Unauthorized');
     }
-    // TODO: Implémenter la logique RBAC réelle si besoin
+    // TODO: Implement real RBAC logic if needed
     next();
 }
 

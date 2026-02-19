@@ -4,7 +4,7 @@ const configService = require('../services/configService');
 const { requireAuth, requireAdmin } = require('../middleware/auth');
 const requestLogger = require('../middleware/requestLogger');
 
-// Middleware Global
+// Global Middleware
 router.use(requestLogger);
 
 // GET /config (Public)

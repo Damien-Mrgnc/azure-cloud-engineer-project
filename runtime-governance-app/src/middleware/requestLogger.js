@@ -1,10 +1,10 @@
 const logger = require('../config/logger');
 
 const requestLogger = (req, res, next) => {
-    // Génère un ID de corrélation
+    // Generate a correlation ID
     req.correlationId = req.headers['x-correlation-id'] || require('crypto').randomUUID();
 
-    // Log à l'arrivée
+    // Log on arrival
     logger.info(`Incoming Request`, {
         method: req.method,
         url: req.url,
@@ -13,7 +13,7 @@ const requestLogger = (req, res, next) => {
         ip: req.ip
     });
 
-    // Log à la sortie (optionnel)
+    // Log on exit (optional)
     res.on('finish', () => {
         logger.info(`Response Sent`, {
             method: req.method,

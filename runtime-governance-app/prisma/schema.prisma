@@ -1,6 +1,6 @@
 generator client {
   provider = "prisma-client-js"
-  binaryTargets = ["native", "linux-musl-openssl-3.0.x"] // Obligatoire pour container Alpine
+  binaryTargets = ["native", "linux-musl-openssl-3.0.x"] // Mandatory for Alpine container
 }
 
 datasource db {
@@ -8,7 +8,7 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-// Table de configuration
+// Configuration table
 model AppConfig {
   keyName   String   @id @db.NVarChar(200)
   value     String?  @db.NVarChar(Max)
@@ -16,7 +16,7 @@ model AppConfig {
   updatedBy String?  @db.NVarChar(256)
 }
 
-// Table d'audit
+// Audit table
 model AppConfigAudit {
   id            Int      @id @default(autoincrement())
   keyName       String   @db.NVarChar(200)

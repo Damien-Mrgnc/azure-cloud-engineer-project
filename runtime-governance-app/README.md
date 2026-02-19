@@ -1,52 +1,43 @@
 # Runtime Governance App
 
-Application de gouvernance dynamique en Node.js 20 + Express + Prisma + Azure SQL.
-Permet de modifier le comportement du site via une interface Admin sans redéploiement, avec audit trail.
+## Description
+This is a dynamic governance application built with Node.js 20, Express, Prisma, and Azure SQL. It allows modifying site behavior via an administration interface without redeployment, maintaining a full audit trail.
 
-## Fonctionnalités
-- Affichage dynamique du titre, description, thème, mode maintenance.
-- API Admin protégée (x-ms-client-principal).
-- Stockage SQL Server Azure avec MI (Managed Identity).
-- Secrets Key Vault (pour strings connexion App Insights etc.).
-- Logging JSON structuré pour Azure Monitor.
+## Key Features
+*   **Dynamic Display**: Configurable title, description, theme, and maintenance mode in real-time.
+*   **Admin API**: Protected endpoint for configuration updates.
+*   **Security**: Uses Managed Identity for SQL database connection and Key Vault secret access.
+*   **Observability**: Structured JSON logging for Azure Monitor ingestion.
 
-## Structure
-- `src/api` : Routes REST
-- `src/services` : Logique métier (Config, KeyVault)
-- `src/middleware` : Auth, Logs
-- `src/views` : UI (SSR EJS)
-- `prisma` : Schéma DB SQL Server
+## Technical Architecture
+*   `src/api`: REST route definitions.
+*   `src/services`: Business logic (Configuration, Key Vault).
+*   `src/middleware`: Authentication and Logging.
+*   `src/views`: User Interface (Server-Side Rendering with EJS).
+*   `prisma`: SQL Server database schema and migrations.
 
-## Prérequis Azure
-- Azure App Service (Linux Container)
-- Azure SQL Database
-- Azure Key Vault
-- Managed Identity activée sur l'App Service
-- Rôle `Key Vault Secrets User` sur l'identité
-- Rôle DB (ou utilisateur contenu) sur la base SQL
+## Azure Prerequisites
+The application requires the following Azure resources:
+*   Azure App Service (Linux Container).
+*   Azure SQL Database.
+*   Azure Key Vault.
+*   Managed Identity enabled on the App Service with appropriate roles (`Key Vault Secrets User`).
 
-## Local Dev (Docker)
-1. Copier `.env.example` vers `.env`
-2. `docker-compose up -d db` (si SQL local)
-3. `npm install`
-4. `npx prisma migrate dev`
-5. `npm run dev`
+## Local Development
+To run the application locally via Docker:
+1.  Copy `.env.example` to `.env`.
+2.  Start the local database: `docker-compose up -d db`.
+3.  Install dependencies: `npm install`.
+4.  Apply migrations: `npx prisma migrate dev`.
+5.  Start the development server: `npm run dev`.
 
-## Déploiement Azure
-Cette application est conçue pour être déployée via GitHub Actions :
-1. Build Docker -> ACR
-2. Deploy -> App Service
+## Azure Deployment
+Deployment is automated via GitHub Actions:
+1.  Build Docker image and push to Azure Container Registry (ACR).
+2.  Deploy the image to App Service.
 
-### Variables d'environnement App Service
-- `DATABASE_URL` : Chaîne de connexion SQL Server (MSI integrated)
-- `KEY_VAULT_URL` : `https://<vault-name>.vault.azure.net/`
-- `NODE_ENV` : `production`
-- `PORT` : `8080` (Par défaut)
-
-## Authentification
-L'application s'attend à être protégée par **Azure App Service Authentication (EasyAuth)**.
-Elle lit les headers `x-ms-client-principal` pour identifier l'utilisateur.
-
-## API
-- `GET /api/config` : Config publique
-- `POST /api/admin/config` : Update config (Admin only)
+### Environment Variables
+*   `DATABASE_URL`: Database connection string (MSI authentication).
+*   `KEY_VAULT_URL`: URL of the Azure Key Vault instance.
+*   `NODE_ENV`: `production`.
+*   `PORT`: `8080`.

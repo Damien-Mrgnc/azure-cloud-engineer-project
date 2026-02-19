@@ -1,20 +1,21 @@
-# Phase 2 - Advanced Ops & Security
+# Phase 2: Advanced Ops & Security
 
-Cette phase marque la transition d'une infrastructure "Lab" vers une architecture "Enterprise-Grade".
-Nous avons refactorisé le code monolithique, ajouté de l'observabilité et renforcé la sécurité.
+## Objectives
+This phase marks the transition from a laboratory infrastructure to an "Enterprise-Grade" architecture. The focus is on code refactoring, observability, and security hardening.
 
-## 🏗️ Architecture Cible
-- **Modularité** : Code découpé par domaine (`network`, `compute`, `database`, `security`).
-- **Observabilité** : Logs centralisés et monitoring applicatif temps réel.
-- **Sécurité** : Zero-Trust (Managed Identity) pour l'accès aux secrets.
+## Target Architecture
+The infrastructure evolves to incorporate best practices:
+*   **Modularity**: Terraform code is split by functional domains (network, compute, database, security).
+*   **Observability**: Centralized logs and real-time application monitoring via Azure Monitor and Application Insights.
+*   **Security**: Implementation of the Zero-Trust model using Managed Identities for access to secrets (Key Vault) and databases.
 
-## 📅 Avancement
-Cette phase a été réalisée en plusieurs commits structurés :
+## Progress and Steps
+This phase was executed following a structured progression:
 
-1.  **Refactoring** (Découpage du code)
-2.  **Observability** (Monitoring Stack)
-3.  **Security Hardening** (Managed Identity)
-4.  **CI/CD** (GitHub Actions - *À venir*)
+1.  **Refactoring**: Restructuring monolithic Terraform code into maintainable modules.
+2.  **Observability**: Setting up the monitoring stack (Log Analytics, Application Insights).
+3.  **Security Hardening**: Removing cleartext passwords from code and transitioning to Managed Identity.
+4.  **CI/CD**: Setting up continuous deployment pipelines with GitHub Actions.
+5.  **Runtime Deployment**: Deploying the final application and troubleshooting runtime issues.
 
----
-*Voir les sous-dossiers pour les détails techniques de chaque étape.*
+Please refer to the subfolders for specific technical details regarding each step.

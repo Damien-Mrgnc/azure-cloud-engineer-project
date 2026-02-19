@@ -39,7 +39,7 @@ output "acr_admin_password" {
   value       = azurerm_container_registry.main.admin_password
 }
 
-# Pour debug/dev uniquement - Ne jamais outputter les secrets en clair en Prod !
+# For debug/dev only - Never output secrets in clear text in Prod!
 output "sql_admin_password_secret_id" {
   description = "ID of the Key Vault Secret containing the SQL password"
   value       = azurerm_key_vault_secret.sql_password.id

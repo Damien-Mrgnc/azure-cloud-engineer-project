@@ -2,14 +2,14 @@ const { SecretClient } = require("@azure/keyvault-secrets");
 const { DefaultAzureCredential } = require("@azure/identity");
 const logger = require('../config/logger');
 
-// URL du Key Vault depuis les variables d'environnement
+// Key Vault URL from environment variables
 const vaultUrl = process.env.KEY_VAULT_URL;
 
 let client;
 
 if (vaultUrl) {
     try {
-        // Managed Identity en premier, puis environnement (local dev)
+        // Managed Identity first, then environment (local dev)
         const credential = new DefaultAzureCredential();
         client = new SecretClient(vaultUrl, credential);
         logger.info(`KeyVault client initialized for ${vaultUrl}`);

@@ -44,6 +44,6 @@ EXPOSE 8080
 ENV NODE_ENV=production
 ENV PORT=8080
 
-# Commande de démarrage
-# Note: Idéalement, on lance les migrations au démarrage si Azure SQL
-CMD ["node", "src/server.js"]
+# Start command
+# Using npm start to run migrations before server startup
+CMD ["npm", "start"]

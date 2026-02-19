@@ -16,10 +16,20 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 // Middleware
 app.use(express.json());
-app.use(cors());
 
-// Routes API Publiques (Public config)
-// GET /api/config -> Retourne l'état actuel
+// CORS Configuration - Restrict access in production
+if (process.env.NODE_ENV === 'production') {
+    app.use(cors({
+        origin: [/azurewebsites\.net$/], // Allow all Azure subdomains
+        methods: ['GET', 'POST', 'PUT', 'DELETE'],
+        allowedHeaders: ['Content-Type', 'Authorization', 'x-correlation-id']
+    }));
+} else {
+    app.use(cors()); // Open for dev
+}
+
+// Public API Routes (Public config)
+// GET /api/config -> Returns current state
 app.get('/api/config', async (req, res) => {
     try {
         const config = await configService.getConfig();
@@ -30,7 +40,7 @@ app.get('/api/config', async (req, res) => {
     }
 });
 
-// Admin API (Protégé)
+// Admin API (Protected)
 // POST /api/admin/config
 const { configUpdateSchema } = require('./validation/configSchema');
 
@@ -56,9 +66,9 @@ app.post('/api/admin/config', requireAuth, requireAdmin, async (req, res) => {
     }
 });
 
-// Routes UI
+// UI Routes
 app.get('/', async (req, res) => {
-    // Page Publique : Rendue côté serveur avec la config actuelle
+    // Public Page: Server-side rendered with current config
     try {
         const config = await configService.getConfig();
         res.render('index', { config });
@@ -78,7 +88,7 @@ app.get('/admin', requireAuth, requireAdmin, async (req, res) => {
     }
 });
 
-// Route Audit Log (Admin)
+// Audit Log Route (Admin)
 app.get('/admin/audit', requireAuth, requireAdmin, async (req, res) => {
     try {
         const config = await configService.getConfig();
@@ -90,13 +100,13 @@ app.get('/admin/audit', requireAuth, requireAdmin, async (req, res) => {
     }
 });
 
-// Lancement Serveur
+// Server Start
 app.listen(port, () => {
     logger.info(`Runtime Governance App listening on port ${port}`);
 });
 
 process.on('SIGTERM', () => {
     logger.info('SIGTERM received. Closing...');
-    // Fermeture propre DB etc.
+    // Clean DB shutdown etc.
     process.exit(0);
 });
